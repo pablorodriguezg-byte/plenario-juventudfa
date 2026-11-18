@@ -1,0 +1,154 @@
+{
+  "entities": {
+    "AccreditedUser": {
+      "title": "AccreditedUser",
+      "description": "Padrón electoral oficial de delegadas/os y Secretaría Técnica indexado por nombre de usuario.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "username": { "type": "string", "minLength": 2, "maxLength": 64 },
+        "usernameLower": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-z0-9._\\-]+$" },
+        "region": { "type": "string", "maxLength": 80 },
+        "role": { "type": "string", "enum": ["DELEGATE", "SECRETARY"] },
+        "organization": { "type": "string", "maxLength": 200 },
+        "avatarUrl": { "type": "string", "maxLength": 500 },
+        "isOnline": { "type": "boolean" },
+        "hasSpokenInCurrentMotion": { "type": "boolean" },
+        "lastSessionId": { "type": "string", "maxLength": 128 },
+        "actorUsernameLower": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "username", "usernameLower", "region", "role", "isOnline", "hasSpokenInCurrentMotion", "createdAt", "updatedAt"]
+    },
+    "PlenarioRoomState": {
+      "title": "PlenarioRoomState",
+      "description": "Documentos compartidos en vivo de la sala plenaria (síntesis, padrón público, actas y mociones de orden).",
+      "type": "object",
+      "properties": {
+        "kind": { "type": "string", "enum": ["synthesis", "roster", "actas", "order_motions"] },
+        "chapters": { "type": "array" },
+        "motionsEnabledGlobal": { "type": "boolean" },
+        "delegatesPublic": { "type": "array" },
+        "items": { "type": "array" },
+        "updatedByUid": { "type": "string", "maxLength": 128 },
+        "updatedByUsernameLower": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["kind", "updatedByUid", "updatedByUsernameLower", "updatedAt"]
+    },
+    "Motion": {
+      "title": "Motion",
+      "description": "Mociones y votaciones parlamentarias sincronizadas en tiempo real.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "roomId": { "type": "string", "enum": ["main"] },
+        "code": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "motionKind": {
+          "type": "string",
+          "enum": [
+            "MOCION_EXTENSIVA",
+            "MOCION_SUPRESIVA",
+            "DISENSO_PRIMERA_VUELTA",
+            "DISENSO_SEGUNDA_VUELTA",
+            "GENERAL_PRESINTESIS",
+            "GENERAL_SINTESIS_FINAL",
+            "MOCION_ORDINARIA"
+          ]
+        },
+        "title": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "description": { "type": "string", "maxLength": 4000 },
+        "proposedBy": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "OPEN", "VOTING", "CLOSED", "APPROVED", "REJECTED", "PASSED_TO_RUNOFF"]
+        },
+        "quorumType": { "type": "string", "enum": ["SIMPLE_MAJORITY", "TWO_THIRDS", "ABSOLUTE_MAJORITY"] },
+        "createdAtMs": { "type": "number" },
+        "startedAtMs": { "type": "number" },
+        "closedAtMs": { "type": "number" },
+        "durationSeconds": { "type": "number" },
+        "targetParagraphId": { "type": "string", "maxLength": 128 },
+        "targetParagraphNumber": { "type": "string", "maxLength": 32 },
+        "originalParagraphText": { "type": "string", "maxLength": 15000 },
+        "proposedExtensionText": { "type": "string", "maxLength": 15000 },
+        "proposedEditedText": { "type": "string", "maxLength": 15000 },
+        "dissensusId": { "type": "string", "maxLength": 128 },
+        "dissensusOptions": { "type": "object" },
+        "runoffOptions": { "type": "array" },
+        "resultSummary": { "type": "object" },
+        "authorUid": { "type": "string", "maxLength": 128 },
+        "actorUsernameLower": { "type": "string", "maxLength": 64 },
+        "updatedByUsernameLower": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "roomId", "code", "motionKind", "title", "description", "proposedBy", "status", "quorumType", "createdAtMs", "durationSeconds", "authorUid", "actorUsernameLower", "createdAt", "updatedAt"]
+    },
+    "MotionVote": {
+      "title": "MotionVote",
+      "description": "Sufragio individual inmutable emitido por una delegada o delegado regional en una moción abierta.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "roomId": { "type": "string", "enum": ["main"] },
+        "motionId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "delegateId": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "delegateUsernameLower": { "type": "string", "minLength": 2, "maxLength": 64, "pattern": "^[a-z0-9._\\-]+$" },
+        "delegateName": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "region": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "vote": { "type": "string", "enum": ["A_FAVOR", "EN_CONTRA", "ABSTENCION", "OPCION_A", "OPCION_B", "OPCION_C"] },
+        "timestamp": { "type": "number" },
+        "digitalSignatureHash": { "type": "string", "minLength": 4, "maxLength": 128 },
+        "notes": { "type": "string", "maxLength": 500 },
+        "authorUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "roomId", "motionId", "delegateId", "delegateUsernameLower", "delegateName", "region", "vote", "timestamp", "digitalSignatureHash", "authorUid", "createdAt"]
+    },
+    "AuditLogEntry": {
+      "title": "AuditLogEntry",
+      "description": "Registro inmutable de trazabilidad y fe pública.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "roomId": { "type": "string", "enum": ["main"] },
+        "timestamp": { "type": "number" },
+        "isoTime": { "type": "string", "maxLength": 64 },
+        "delegateId": { "type": "string", "maxLength": 128 },
+        "delegateName": { "type": "string", "maxLength": 200 },
+        "ipAddress": { "type": "string", "maxLength": 64 },
+        "action": { "type": "string", "maxLength": 80 },
+        "details": { "type": "string", "maxLength": 1000 },
+        "integrityHash": { "type": "string", "maxLength": 128 },
+        "authorUid": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "roomId", "timestamp", "isoTime", "delegateId", "delegateName", "ipAddress", "action", "details", "integrityHash", "authorUid", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/accredited_users/{usernameKey}": {
+      "schema": { "$ref": "#/entities/AccreditedUser" },
+      "description": "Credenciales del padrón oficial indexadas por nombre de usuario en minúsculas."
+    },
+    "/plenario_rooms/{roomId}": {
+      "schema": { "$ref": "#/entities/PlenarioRoomState" },
+      "description": "Estado compartido en vivo de capítulos/presíntesis, padrón público, actas y mociones de orden."
+    },
+    "/motions/{motionId}": {
+      "schema": { "$ref": "#/entities/Motion" },
+      "description": "Catálogo en tiempo real de mociones y votaciones del Plenario."
+    },
+    "/votes/{voteId}": {
+      "schema": { "$ref": "#/entities/MotionVote" },
+      "description": "Votos nominales inmutables (voteId = motionId__delegateId)."
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLogEntry" },
+      "description": "Bitácora de auditoría institucional."
+    }
+  }
+}
