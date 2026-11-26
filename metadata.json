@@ -1,6 +1,0 @@
-{
-  "name": "Plataforma Digital - Plenario Nacional de Juventudes FE-FA",
-  "description": "Plataforma oficial de deliberación y votación del Frente Estudiantil (FE-FA): Presíntesis regional, mociones extensivas (50%+1), mociones supresivas (2/3), votación de disensos en primera y segunda vuelta, y síntesis final vinculante.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
